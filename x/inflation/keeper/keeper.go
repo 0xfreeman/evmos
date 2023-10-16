@@ -19,7 +19,6 @@ type Keeper struct {
 
 	accountKeeper    types.AccountKeeper
 	bankKeeper       types.BankKeeper
-	distrKeeper      types.DistrKeeper
 	stakingKeeper    types.StakingKeeper
 	feeCollectorName string
 }
@@ -31,7 +30,6 @@ func NewKeeper(
 	ps paramtypes.Subspace,
 	ak types.AccountKeeper,
 	bk types.BankKeeper,
-	dk types.DistrKeeper,
 	sk types.StakingKeeper,
 	feeCollectorName string,
 ) Keeper {
@@ -51,7 +49,6 @@ func NewKeeper(
 		paramstore:       ps,
 		accountKeeper:    ak,
 		bankKeeper:       bk,
-		distrKeeper:      dk,
 		stakingKeeper:    sk,
 		feeCollectorName: feeCollectorName,
 	}

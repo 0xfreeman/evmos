@@ -32,26 +32,16 @@ func (k Keeper) ClaimCoinsForAction(
 		return sdk.ZeroInt(), nil
 	}
 
-	claimableAmount, remainderAmount := k.GetClaimableAmountForAction(ctx, claimsRecord, action, params)
+	claimableAmount, _ := k.GetClaimableAmountForAction(ctx, claimsRecord, action, params)
 
 	if claimableAmount.IsZero() {
 		return sdk.ZeroInt(), nil
 	}
 
 	claimedCoins := sdk.Coins{sdk.Coin{Denom: params.ClaimsDenom, Amount: claimableAmount}}
-	remainderCoins := sdk.Coins{sdk.Coin{Denom: params.ClaimsDenom, Amount: remainderAmount}}
 
 	if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, addr, claimedCoins); err != nil {
 		return sdk.ZeroInt(), err
-	}
-
-	// fund community pool if remainder is not 0
-	if !remainderAmount.IsZero() {
-		escrowAddr := k.GetModuleAccountAddress()
-
-		if err := k.distrKeeper.FundCommunityPool(ctx, remainderCoins, escrowAddr); err != nil {
-			return sdk.ZeroInt(), err
-		}
 	}
 
 	claimsRecord.MarkClaimed(action)
@@ -147,11 +137,6 @@ func (k Keeper) MergeClaimsRecords(
 	// short-circuit: don't fund community pool if remainder is 0
 	if remainderCoins.IsZero() {
 		return mergedRecord, nil
-	}
-
-	escrowAddr := k.GetModuleAccountAddress()
-	if err := k.distrKeeper.FundCommunityPool(ctx, remainderCoins, escrowAddr); err != nil {
-		return types.ClaimsRecord{}, err
 	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{

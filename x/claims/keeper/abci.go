@@ -3,7 +3,6 @@ package keeper
 import (
 	"strconv"
 
-	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	vestexported "github.com/cosmos/cosmos-sdk/x/auth/vesting/exported"
 	ethermint "github.com/evmos/ethermint/types"
@@ -65,10 +64,6 @@ func (k Keeper) ClawbackEscrowedTokens(ctx sdk.Context) error {
 	if balances.IsZero() {
 		logger.Debug("clawback aborted, airdrop escrow account is empty")
 		return nil
-	}
-
-	if err := k.distrKeeper.FundCommunityPool(ctx, balances, moduleAccAddr); err != nil {
-		return errorsmod.Wrap(err, "failed to transfer escrowed airdrop tokens")
 	}
 
 	logger.Info(
@@ -151,20 +146,6 @@ func (k Keeper) ClawbackEmptyAccounts(ctx sdk.Context, claimsDenom string) {
 		// the same as the initial dust sent on genesis
 		found, clawbackCoin := accountBalances.Find(claimsDenom)
 		if !found || !clawbackCoin.Equal(dustCoin) {
-			return false
-		}
-
-		// Send all unclaimed airdropped coins back to the community pool
-		// and prune those inactive wallets from current state.
-		// "Unclaimed" tokens are defined as being in wallets which have a sequence
-		// number = 0, which means the address has NOT performed a single action
-		// during the airdrop claim window.
-		if err := k.distrKeeper.FundCommunityPool(ctx, sdk.Coins{clawbackCoin}, addr); err != nil {
-			logger.Debug(
-				"not enough balance to clawback account",
-				"address", addr.String(),
-				"amount", clawbackCoin.String(),
-			)
 			return false
 		}
 
