@@ -51,7 +51,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 func (k Keeper) PrintLog(ctx sdk.Context) {
-	k.Logger(ctx).Debug(
+	k.Logger(ctx).Info(
 		"@@@@@@PrintLog",
 		"height", ctx.BlockHeight(),
 	)
