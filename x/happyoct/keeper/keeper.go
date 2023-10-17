@@ -10,10 +10,10 @@ import (
 )
 
 type Keeper struct {
-	storeKey   storetypes.StoreKey
-	cdc        codec.BinaryCodec
-	paramstore paramtypes.Subspace
-
+	storeKey         storetypes.StoreKey
+	cdc              codec.BinaryCodec
+	paramstore       paramtypes.Subspace
+	bankKeeper       types.BankKeeper
 	accountKeeper    types.AccountKeeper
 	feeCollectorName string
 }
@@ -23,6 +23,7 @@ func NewKeeper(
 	storeKey storetypes.StoreKey,
 	cdc codec.BinaryCodec,
 	ps paramtypes.Subspace,
+	bk types.BankKeeper,
 	ak types.AccountKeeper,
 	feeCollectorName string,
 ) Keeper {
@@ -40,6 +41,7 @@ func NewKeeper(
 		storeKey:         storeKey,
 		cdc:              cdc,
 		paramstore:       ps,
+		bankKeeper:       bk,
 		accountKeeper:    ak,
 		feeCollectorName: feeCollectorName,
 	}
@@ -48,12 +50,4 @@ func NewKeeper(
 // Logger returns a module-specific logger.
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", "x/"+types.ModuleName)
-}
-
-func (k Keeper) PrintLog(ctx sdk.Context) {
-	k.Logger(ctx).Info(
-		"@@@@@@PrintLog",
-		"height", ctx.BlockHeight(),
-	)
-	return
 }
