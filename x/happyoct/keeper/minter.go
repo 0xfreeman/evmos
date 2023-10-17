@@ -3,10 +3,11 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/evmos/evmos/v10/x/happyoct/types"
+	abci "github.com/tendermint/tendermint/abci/types"
 )
 
-func (k Keeper) PrintLog(ctx sdk.Context) error {
-	if err := k.MintAndAllocateInflation(ctx); err != nil {
+func (k Keeper) PrintLog(ctx sdk.Context, req abci.RequestBeginBlock) error {
+	if err := k.MintAndAllocateInflation(ctx, req); err != nil {
 		return err
 	}
 	return nil
@@ -24,12 +25,18 @@ func (k Keeper) MintCoins(ctx sdk.Context, coin sdk.Coin) error {
 }
 
 // MintAndAllocateInflation performs inflation minting and allocation
-func (k Keeper) MintAndAllocateInflation(ctx sdk.Context) (err error) {
+func (k Keeper) MintAndAllocateInflation(ctx sdk.Context, req abci.RequestBeginBlock) (err error) {
 	// Mint coins for distribution
+	consAddr := sdk.ConsAddress(req.Header.ProposerAddress)
 	coin := sdk.NewCoin("aevmos", sdk.NewInt(1000000000000000000))
 	if err := k.MintCoins(ctx, coin); err != nil {
 		return err
 	}
+	k.Logger(ctx).Info(
+		"MintAndAllocateInflation",
+		"height", ctx.BlockHeight(),
+		"consAddr", consAddr.String(),
+	)
 
 	// Allocate minted coins according to allocation proportions (staking, usage
 	// incentives, community pool)

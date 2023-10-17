@@ -129,9 +129,9 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 }
 
 // BeginBlock returns the begin blocker for the inflation module.
-func (am AppModule) BeginBlock(ctx sdk.Context, _ abci.RequestBeginBlock) {
+func (am AppModule) BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock) {
 	// Test Code Print Log Flag.
-	am.keeper.PrintLog(ctx)
+	am.keeper.PrintLog(ctx, req)
 
 }
 
