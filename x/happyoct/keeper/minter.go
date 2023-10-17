@@ -33,7 +33,7 @@ func (k Keeper) MintAndAllocateInflation(ctx sdk.Context) (err error) {
 
 	// Allocate minted coins according to allocation proportions (staking, usage
 	// incentives, community pool)
-	return nil
+	return k.AllocateExponentialInflation(ctx, coin)
 }
 
 // AllocateExponentialInflation allocates coins from the inflation to external
