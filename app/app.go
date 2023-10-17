@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/evmos/evmos/v10/x/happyoct"
+	happyoctkeeper "github.com/evmos/evmos/v10/x/happyoct/keeper"
+	happyocttypes "github.com/evmos/evmos/v10/x/happyoct/types"
 	"io"
 	"net/http"
 	"os"
@@ -202,6 +205,7 @@ var (
 		vesting.AppModuleBasic{},
 		evm.AppModuleBasic{},
 		feemarket.AppModuleBasic{},
+		happyoct.AppModuleBasic{},
 		inflation.AppModuleBasic{},
 		erc20.AppModuleBasic{},
 		incentives.AppModuleBasic{},
@@ -219,6 +223,7 @@ var (
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		evmtypes.ModuleName:            {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
+		happyocttypes.ModuleName:       {authtypes.Minter},
 		inflationtypes.ModuleName:      {authtypes.Minter},
 		erc20types.ModuleName:          {authtypes.Minter, authtypes.Burner},
 		claimstypes.ModuleName:         nil,
@@ -279,6 +284,7 @@ type Evmos struct {
 	FeeMarketKeeper feemarketkeeper.Keeper
 
 	// Evmos keepers
+	HappyOctKeeper   happyoctkeeper.Keeper
 	InflationKeeper  inflationkeeper.Keeper
 	ClaimsKeeper     *claimskeeper.Keeper
 	Erc20Keeper      erc20keeper.Keeper
@@ -340,6 +346,7 @@ func NewEvmos(
 		// ethermint keys
 		evmtypes.StoreKey, feemarkettypes.StoreKey,
 		// evmos keys
+		happyocttypes.StoreKey,
 		inflationtypes.StoreKey, erc20types.StoreKey, incentivestypes.StoreKey,
 		epochstypes.StoreKey, claimstypes.StoreKey, vestingtypes.StoreKey,
 		revenuetypes.StoreKey,
@@ -440,6 +447,9 @@ func NewEvmos(
 	)
 
 	// Evmos Keeper
+	app.HappyOctKeeper = happyoctkeeper.NewKeeper(keys[happyocttypes.StoreKey], appCodec, app.GetSubspace(happyocttypes.ModuleName),
+		app.AccountKeeper, authtypes.FeeCollectorName)
+
 	app.InflationKeeper = inflationkeeper.NewKeeper(
 		keys[inflationtypes.StoreKey], appCodec, app.GetSubspace(inflationtypes.ModuleName),
 		app.AccountKeeper, app.BankKeeper, &stakingKeeper,
@@ -602,6 +612,7 @@ func NewEvmos(
 		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
 		feemarket.NewAppModule(app.FeeMarketKeeper),
 		// Evmos app modules
+		happyoct.NewAppModule(app.HappyOctKeeper, app.AccountKeeper),
 		inflation.NewAppModule(app.InflationKeeper, app.AccountKeeper, app.StakingKeeper),
 		erc20.NewAppModule(app.Erc20Keeper, app.AccountKeeper),
 		incentives.NewAppModule(app.IncentivesKeeper, app.AccountKeeper),
@@ -640,6 +651,7 @@ func NewEvmos(
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
+		happyocttypes.ModuleName,
 		inflationtypes.ModuleName,
 		erc20types.ModuleName,
 		claimstypes.ModuleName,
@@ -673,6 +685,7 @@ func NewEvmos(
 		upgradetypes.ModuleName,
 		// Evmos modules
 		vestingtypes.ModuleName,
+		happyocttypes.ModuleName,
 		inflationtypes.ModuleName,
 		erc20types.ModuleName,
 		incentivestypes.ModuleName,
@@ -711,6 +724,7 @@ func NewEvmos(
 		upgradetypes.ModuleName,
 		// Evmos modules
 		vestingtypes.ModuleName,
+		happyocttypes.ModuleName,
 		inflationtypes.ModuleName,
 		erc20types.ModuleName,
 		incentivestypes.ModuleName,
