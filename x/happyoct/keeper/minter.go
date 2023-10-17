@@ -27,7 +27,8 @@ func (k Keeper) MintCoins(ctx sdk.Context, coin sdk.Coin) error {
 // MintAndAllocateInflation performs inflation minting and allocation
 func (k Keeper) MintAndAllocateInflation(ctx sdk.Context, req abci.RequestBeginBlock) (err error) {
 	// Mint coins for distribution
-	consAddr := sdk.ConsAddress(req.Header.ProposerAddress)
+	currentProposer := sdk.ConsAddress(req.Header.ProposerAddress)
+	currentValidator := k.stakingKeeper.ValidatorByConsAddr(ctx, currentProposer)
 	coin := sdk.NewCoin("aevmos", sdk.NewInt(1000000000000000000))
 	if err := k.MintCoins(ctx, coin); err != nil {
 		return err
@@ -35,12 +36,13 @@ func (k Keeper) MintAndAllocateInflation(ctx sdk.Context, req abci.RequestBeginB
 	k.Logger(ctx).Info(
 		"MintAndAllocateInflation",
 		"height", ctx.BlockHeight(),
-		"consAddr", consAddr.String(),
+		"consAddr", currentValidator.GetOperator().String(),
+		"AccAddress", sdk.AccAddress(currentValidator.GetOperator()).String(),
 	)
 
 	// Allocate minted coins according to allocation proportions (staking, usage
 	// incentives, community pool)
-	return k.AllocateExponentialInflation(ctx, coin)
+	return k.AllocateExponentialInflation(ctx, coin, currentValidator.GetOperator())
 }
 
 // AllocateExponentialInflation allocates coins from the inflation to external
@@ -48,6 +50,7 @@ func (k Keeper) MintAndAllocateInflation(ctx sdk.Context, req abci.RequestBeginB
 func (k Keeper) AllocateExponentialInflation(
 	ctx sdk.Context,
 	mintedCoin sdk.Coin,
+	validatorAddr sdk.ValAddress,
 ) (
 	err error,
 ) {
@@ -59,6 +62,12 @@ func (k Keeper) AllocateExponentialInflation(
 		k.feeCollectorName,
 		mintedRewards,
 	)
+	//err = k.bankKeeper.SendCoinsFromModuleToAccount(
+	//	ctx,
+	//	types.ModuleName,
+	//	sdk.AccAddress(validatorAddr),
+	//	mintedRewards,
+	//)
 	if err != nil {
 		return err
 	}
@@ -66,6 +75,7 @@ func (k Keeper) AllocateExponentialInflation(
 		"AllocateExponentialInflation",
 		"height", ctx.BlockHeight(),
 		"mintedRewards", mintedRewards.String(),
+		"validatorAddr", validatorAddr.String(),
 	)
 	return nil
 }
