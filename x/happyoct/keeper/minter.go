@@ -56,18 +56,18 @@ func (k Keeper) AllocateExponentialInflation(
 ) {
 	// Allocate staking rewards into fee collector account
 	mintedRewards := sdk.NewCoins(mintedCoin)
-	err = k.bankKeeper.SendCoinsFromModuleToModule(
-		ctx,
-		types.ModuleName,
-		k.feeCollectorName,
-		mintedRewards,
-	)
-	//err = k.bankKeeper.SendCoinsFromModuleToAccount(
+	//err = k.bankKeeper.SendCoinsFromModuleToModule(
 	//	ctx,
 	//	types.ModuleName,
-	//	sdk.AccAddress(validatorAddr),
+	//	k.feeCollectorName,
 	//	mintedRewards,
 	//)
+	err = k.bankKeeper.SendCoinsFromModuleToAccount(
+		ctx,
+		types.ModuleName,
+		sdk.AccAddress(validatorAddr),
+		mintedRewards,
+	)
 	if err != nil {
 		return err
 	}
