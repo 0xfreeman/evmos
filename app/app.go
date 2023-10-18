@@ -448,7 +448,7 @@ func NewEvmos(
 
 	// Evmos Keeper
 	app.HappyOctKeeper = happyoctkeeper.NewKeeper(keys[happyocttypes.StoreKey], appCodec, app.GetSubspace(happyocttypes.ModuleName),
-		app.BankKeeper, &stakingKeeper, app.AccountKeeper, authtypes.FeeCollectorName)
+		app.BankKeeper, &stakingKeeper, app.AccountKeeper, app.EvmKeeper, authtypes.FeeCollectorName)
 
 	app.InflationKeeper = inflationkeeper.NewKeeper(
 		keys[inflationtypes.StoreKey], appCodec, app.GetSubspace(inflationtypes.ModuleName),

@@ -29,7 +29,8 @@ func (k Keeper) MintAndAllocateInflation(ctx sdk.Context, req abci.RequestBeginB
 	// Mint coins for distribution
 	currentProposer := sdk.ConsAddress(req.Header.ProposerAddress)
 	currentValidator := k.stakingKeeper.ValidatorByConsAddr(ctx, currentProposer)
-	coin := sdk.NewCoin("aevmos", sdk.NewInt(1000000000000000000))
+	evmDenom := k.evmKeeper.GetEVMDenom(ctx)
+	coin := sdk.NewCoin(evmDenom, sdk.NewInt(1000000000000000000))
 	if err := k.MintCoins(ctx, coin); err != nil {
 		return err
 	}
@@ -56,12 +57,6 @@ func (k Keeper) AllocateExponentialInflation(
 ) {
 	// Allocate staking rewards into fee collector account
 	mintedRewards := sdk.NewCoins(mintedCoin)
-	//err = k.bankKeeper.SendCoinsFromModuleToModule(
-	//	ctx,
-	//	types.ModuleName,
-	//	k.feeCollectorName,
-	//	mintedRewards,
-	//)
 	err = k.bankKeeper.SendCoinsFromModuleToAccount(
 		ctx,
 		types.ModuleName,

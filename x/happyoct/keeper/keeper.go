@@ -16,6 +16,7 @@ type Keeper struct {
 	bankKeeper       types.BankKeeper
 	stakingKeeper    types.StakingKeeper
 	accountKeeper    types.AccountKeeper
+	evmKeeper        types.EVMKeeper
 	feeCollectorName string
 }
 
@@ -27,6 +28,7 @@ func NewKeeper(
 	bk types.BankKeeper,
 	sk types.StakingKeeper,
 	ak types.AccountKeeper,
+	evmk types.EVMKeeper,
 	feeCollectorName string,
 ) Keeper {
 	// ensure mint module account is set
@@ -46,6 +48,7 @@ func NewKeeper(
 		bankKeeper:       bk,
 		stakingKeeper:    sk,
 		accountKeeper:    ak,
+		evmKeeper:        evmk,
 		feeCollectorName: feeCollectorName,
 	}
 }

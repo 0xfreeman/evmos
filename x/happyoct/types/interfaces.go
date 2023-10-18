@@ -27,12 +27,6 @@ type BankKeeper interface {
 	GetSupply(ctx sdk.Context, denom string) sdk.Coin
 }
 
-// // DistrKeeper defines the contract needed to be fulfilled for distribution keeper
-//
-//	type DistrKeeper interface {
-//		FundCommunityPool(ctx sdk.Context, amount sdk.Coins, sender sdk.AccAddress) error
-//	}
-//
 // StakingKeeper expected staking keeper
 type StakingKeeper interface {
 	// iterate through validators by operator address, execute func for each validator
@@ -50,4 +44,8 @@ type StakingKeeper interface {
 		fn func(index int64, delegation stakingtypes.DelegationI) (stop bool))
 
 	GetAllSDKDelegations(ctx sdk.Context) []stakingtypes.Delegation
+}
+
+type EVMKeeper interface {
+	GetEVMDenom(ctx sdk.Context) string
 }
