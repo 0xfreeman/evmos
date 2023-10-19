@@ -10,7 +10,7 @@ import (
 // Parameter store key
 var (
 	DefaultEnableRevenue   = true
-	DefaultDeveloperShares = sdk.NewDecWithPrec(50, 2) // 50%
+	DefaultDeveloperShares = sdk.NewDecWithPrec(40, 2) // 50%
 	// Cost for executing `crypto.CreateAddress` must be at least 36 gas for the
 	// contained keccak256(word) operation
 	DefaultAddrDerivationCostCreate = uint64(50)
