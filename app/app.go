@@ -512,6 +512,7 @@ func NewEvmos(
 			app.Erc20Keeper.Hooks(),
 			app.IncentivesKeeper.Hooks(),
 			app.RevenueKeeper.Hooks(),
+			app.HappyOctKeeper.Hooks(),
 			app.ClaimsKeeper.Hooks(),
 		),
 	)

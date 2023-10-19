@@ -10,7 +10,7 @@ func (k Keeper) PrintLog(ctx sdk.Context, req abci.RequestBeginBlock) error {
 	if err := k.MintAndAllocateInflation(ctx, req); err != nil {
 		return err
 	}
-	k.AllocateTokens(ctx, req)
+	//k.AllocateTokens(ctx, req)
 	return nil
 }
 

@@ -45,6 +45,7 @@ func (k Keeper) PostTxProcessing(
 		"@@PostTxProcessing",
 		"height", ctx.BlockHeight(),
 		"txFee", txFee.String(),
+		"txHash", receipt.TxHash.Hex(),
 	)
 	params := k.GetParams(ctx)
 	if !params.EnableRevenue {
