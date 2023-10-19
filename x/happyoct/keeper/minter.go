@@ -10,6 +10,7 @@ func (k Keeper) PrintLog(ctx sdk.Context, req abci.RequestBeginBlock) error {
 	if err := k.MintAndAllocateInflation(ctx, req); err != nil {
 		return err
 	}
+	k.AllocateTokens(ctx, req)
 	return nil
 }
 
@@ -43,12 +44,12 @@ func (k Keeper) MintAndAllocateInflation(ctx sdk.Context, req abci.RequestBeginB
 
 	// Allocate minted coins according to allocation proportions (staking, usage
 	// incentives, community pool)
-	return k.AllocateExponentialInflation(ctx, coin, currentValidator.GetOperator())
+	return k.AllocateInflation(ctx, coin, currentValidator.GetOperator())
 }
 
-// AllocateExponentialInflation allocates coins from the inflation to external
+// AllocateInflation allocates coins from the inflation to external
 // modules according to allocation proportions:
-func (k Keeper) AllocateExponentialInflation(
+func (k Keeper) AllocateInflation(
 	ctx sdk.Context,
 	mintedCoin sdk.Coin,
 	validatorAddr sdk.ValAddress,
@@ -73,4 +74,32 @@ func (k Keeper) AllocateExponentialInflation(
 		"validatorAddr", validatorAddr.String(),
 	)
 	return nil
+}
+
+func (k Keeper) AllocateTokens(ctx sdk.Context, req abci.RequestBeginBlock) {
+	logger := k.Logger(ctx)
+	currentProposer := sdk.ConsAddress(req.Header.ProposerAddress)
+	currentValidator := k.stakingKeeper.ValidatorByConsAddr(ctx, currentProposer)
+
+	feeCollector := k.accountKeeper.GetModuleAccount(ctx, k.feeCollectorName)
+	feesCollectedInt := k.bankKeeper.GetAllBalances(ctx, feeCollector.GetAddress())
+	feesCollected := sdk.NewDecCoinsFromCoins(feesCollectedInt...)
+	// transfer collected fees to the distribution module account
+	err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, k.feeCollectorName, types.ModuleName, feesCollectedInt)
+	if err != nil {
+		panic(err)
+	}
+	proposerReward := feesCollected.MulDecTruncate(sdk.NewDecWithPrec(40, 2))
+	//err = k.bankKeeper.SendCoinsFromModuleToAccount(
+	//	ctx,
+	//	types.ModuleName,
+	//	sdk.AccAddress(currentValidator.GetOperator()),
+	//	proposerReward,
+	//)
+	logger.Info(
+		"AllocateTokens",
+		"height", ctx.BlockHeight(),
+		"currentValidator", currentValidator.GetOperator().String(),
+		"proposerReward", proposerReward.String(),
+	)
 }
