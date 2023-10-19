@@ -62,6 +62,11 @@ func (k Keeper) PostTxProcessing(
 	}
 
 	txFee := sdk.NewIntFromUint64(receipt.GasUsed).Mul(sdk.NewIntFromBigInt(msg.GasPrice()))
+	k.Logger(ctx).Info(
+		"@@PostTxProcessing",
+		"height", ctx.BlockHeight(),
+		"txFee", txFee.String(),
+	)
 	developerFee := (params.DeveloperShares).MulInt(txFee).TruncateInt()
 	evmDenom := k.evmKeeper.GetParams(ctx).EvmDenom
 	fees := sdk.Coins{{Denom: evmDenom, Amount: developerFee}}
