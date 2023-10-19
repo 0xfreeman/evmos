@@ -100,6 +100,7 @@ func (k Keeper) AllocateTokens(ctx sdk.Context, req abci.RequestBeginBlock) {
 		"AllocateTokens",
 		"height", ctx.BlockHeight(),
 		"currentValidator", currentValidator.GetOperator().String(),
+		"feesCollected", feesCollected.String(),
 		"proposerReward", proposerReward.String(),
 	)
 }
