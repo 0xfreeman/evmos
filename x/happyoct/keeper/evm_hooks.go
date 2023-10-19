@@ -32,11 +32,14 @@ func (k Keeper) PostTxProcessing(
 	receipt *ethtypes.Receipt,
 ) error {
 	txFee := sdk.NewIntFromUint64(receipt.GasUsed).Mul(sdk.NewIntFromBigInt(msg.GasPrice()))
+	moduleAccount := k.accountKeeper.GetModuleAccount(ctx, k.feeCollectorName)
+	balance := k.bankKeeper.GetBalance(ctx, moduleAccount.GetAddress(), "aevmos")
 	k.Logger(ctx).Info(
 		"@@After revenue PostTxProcessing",
 		"height", ctx.BlockHeight(),
 		"txFee", txFee.String(),
 		"txHash", receipt.TxHash.Hex(),
+		"fee_collector balance", balance.String(),
 	)
 	return nil
 }
