@@ -40,6 +40,12 @@ func (k Keeper) PostTxProcessing(
 	receipt *ethtypes.Receipt,
 ) error {
 	// check if the fees are globally enabled
+	txFee := sdk.NewIntFromUint64(receipt.GasUsed).Mul(sdk.NewIntFromBigInt(msg.GasPrice()))
+	k.Logger(ctx).Info(
+		"@@PostTxProcessing",
+		"height", ctx.BlockHeight(),
+		"txFee", txFee.String(),
+	)
 	params := k.GetParams(ctx)
 	if !params.EnableRevenue {
 		return nil
@@ -61,12 +67,6 @@ func (k Keeper) PostTxProcessing(
 		withdrawer = revenue.GetDeployerAddr()
 	}
 
-	txFee := sdk.NewIntFromUint64(receipt.GasUsed).Mul(sdk.NewIntFromBigInt(msg.GasPrice()))
-	k.Logger(ctx).Info(
-		"@@PostTxProcessing",
-		"height", ctx.BlockHeight(),
-		"txFee", txFee.String(),
-	)
 	developerFee := (params.DeveloperShares).MulInt(txFee).TruncateInt()
 	evmDenom := k.evmKeeper.GetParams(ctx).EvmDenom
 	fees := sdk.Coins{{Denom: evmDenom, Amount: developerFee}}
