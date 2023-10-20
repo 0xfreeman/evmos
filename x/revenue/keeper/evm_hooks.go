@@ -38,13 +38,6 @@ func (k Keeper) PostTxProcessing(
 	msg core.Message,
 	receipt *ethtypes.Receipt,
 ) error {
-	// check if the fees are globally enabled
-	//k.Logger(ctx).Info(
-	//	"@@PostTxProcessing",
-	//	"height", ctx.BlockHeight(),
-	//	"txFee", txFee.String(),
-	//	"txHash", receipt.TxHash.Hex(),
-	//)
 	params := k.GetParams(ctx)
 	if !params.EnableRevenue {
 		return nil

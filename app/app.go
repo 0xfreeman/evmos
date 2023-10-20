@@ -652,13 +652,13 @@ func NewEvmos(
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
-		happyocttypes.ModuleName,
 		inflationtypes.ModuleName,
 		erc20types.ModuleName,
 		claimstypes.ModuleName,
 		incentivestypes.ModuleName,
 		recoverytypes.ModuleName,
 		revenuetypes.ModuleName,
+		happyocttypes.ModuleName,
 	)
 
 	// NOTE: fee market module must go last in order to retrieve the block gas used.
