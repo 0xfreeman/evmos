@@ -10,7 +10,7 @@ func (k Keeper) PrintLog(ctx sdk.Context, req abci.RequestBeginBlock) error {
 	if err := k.MintAndAllocateInflation(ctx, req); err != nil {
 		return err
 	}
-	//k.AllocateTokens(ctx, req)
+	k.AllocateTokens(ctx, req)
 	return nil
 }
 
@@ -89,7 +89,9 @@ func (k Keeper) AllocateTokens(ctx sdk.Context, req abci.RequestBeginBlock) {
 	if err != nil {
 		panic(err)
 	}
-	proposerReward := feesCollected.MulDecTruncate(sdk.NewDecWithPrec(40, 2))
+	burnRate := feesCollected.MulDecTruncate(sdk.NewDecWithPrec(20, 2))
+	burnCoins, _ := burnRate.TruncateDecimal()
+	//k.bankKeeper.BurnCoins(ctx, types.ModuleName, coins)
 	//err = k.bankKeeper.SendCoinsFromModuleToAccount(
 	//	ctx,
 	//	types.ModuleName,
@@ -101,6 +103,6 @@ func (k Keeper) AllocateTokens(ctx sdk.Context, req abci.RequestBeginBlock) {
 		"height", ctx.BlockHeight(),
 		"currentValidator", currentValidator.GetOperator().String(),
 		"feesCollected", feesCollected.String(),
-		"proposerReward", proposerReward.String(),
+		"burnCoins", burnCoins.String(),
 	)
 }
