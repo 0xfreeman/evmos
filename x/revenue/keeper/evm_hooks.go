@@ -49,8 +49,27 @@ func (k Keeper) PostTxProcessing(
 	}
 
 	txFee := sdk.NewIntFromUint64(receipt.GasUsed).Mul(sdk.NewIntFromBigInt(msg.GasPrice()))
-	developerFee := (params.DeveloperShares).MulInt(txFee).TruncateInt()
 	evmDenom := k.evmKeeper.GetParams(ctx).EvmDenom
+	burnCoins := sdk.NewDecWithPrec(20, 2).MulInt(txFee).TruncateInt()
+
+	err := k.bankKeeper.BurnCoins(ctx, k.feeCollectorName, sdk.NewCoins(sdk.NewCoin(evmDenom, burnCoins)))
+	if err != nil {
+		return errorsmod.Wrapf(
+			err,
+			"failed to burn %s from fee collector account. contract %s",
+			sdk.NewCoin(evmDenom, burnCoins), contract,
+		)
+	} else {
+		k.Logger(ctx).Info(
+			"@@BurnCoins success",
+			"height", ctx.BlockHeight(),
+			"txFee", txFee,
+			"burnCoins", burnCoins.String(),
+			"txHash", receipt.TxHash.Hex(),
+		)
+	}
+
+	developerFee := (params.DeveloperShares).MulInt(txFee).TruncateInt()
 	fees := sdk.Coins{{Denom: evmDenom, Amount: developerFee}}
 	// if the contract is not registered to receive fees, do nothing
 	revenue, found := k.GetRevenue(ctx, *contract)
@@ -92,7 +111,7 @@ func (k Keeper) PostTxProcessing(
 	}
 
 	// distribute the fees to the contract deployer / withdraw address
-	err := k.bankKeeper.SendCoinsFromModuleToAccount(
+	err = k.bankKeeper.SendCoinsFromModuleToAccount(
 		ctx,
 		k.feeCollectorName,
 		withdrawer,
