@@ -50,23 +50,26 @@ func (k Keeper) PostTxProcessing(
 
 	txFee := sdk.NewIntFromUint64(receipt.GasUsed).Mul(sdk.NewIntFromBigInt(msg.GasPrice()))
 	evmDenom := k.evmKeeper.GetParams(ctx).EvmDenom
-	burnCoins := sdk.NewDecWithPrec(20, 2).MulInt(txFee).TruncateInt()
-
-	err := k.bankKeeper.BurnCoins(ctx, k.feeCollectorName, sdk.NewCoins(sdk.NewCoin(evmDenom, burnCoins)))
-	if err != nil {
-		return errorsmod.Wrapf(
-			err,
-			"failed to burn %s from fee collector account. contract %s",
-			sdk.NewCoin(evmDenom, burnCoins), contract,
-		)
-	} else {
-		k.Logger(ctx).Info(
-			"@@BurnCoins success",
-			"height", ctx.BlockHeight(),
-			"txFee", txFee,
-			"burnCoins", burnCoins.String(),
-			"txHash", receipt.TxHash.Hex(),
-		)
+	burnDecCoin := sdk.NewDecWithPrec(20, 2).MulInt(txFee).TruncateInt()
+	burnCoins := sdk.NewCoins(sdk.NewCoin(evmDenom, burnDecCoin))
+	err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, k.feeCollectorName, types.ModuleName, burnCoins)
+	if err == nil {
+		err := k.bankKeeper.BurnCoins(ctx, types.ModuleName, burnCoins)
+		if err != nil {
+			return errorsmod.Wrapf(
+				err,
+				"failed to burn %s from fee collector account. contract %s",
+				burnCoins.String(), contract,
+			)
+		} else {
+			k.Logger(ctx).Info(
+				"@@BurnCoins success",
+				"height", ctx.BlockHeight(),
+				"txFee", txFee,
+				"burnCoins", burnCoins.String(),
+				"txHash", receipt.TxHash.Hex(),
+			)
+		}
 	}
 
 	developerFee := (params.DeveloperShares).MulInt(txFee).TruncateInt()
