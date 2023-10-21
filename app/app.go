@@ -223,8 +223,7 @@ var (
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		evmtypes.ModuleName:            {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
-		happyocttypes.ModuleName:       {authtypes.Minter},
-		revenuetypes.ModuleName:        {authtypes.Burner},
+		happyocttypes.ModuleName:       {authtypes.Minter, authtypes.Burner},
 		inflationtypes.ModuleName:      {authtypes.Minter},
 		erc20types.ModuleName:          {authtypes.Minter, authtypes.Burner},
 		claimstypes.ModuleName:         nil,
