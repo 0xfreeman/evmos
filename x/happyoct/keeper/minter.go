@@ -53,7 +53,8 @@ func (k Keeper) MintAndAllocateInflation(ctx sdk.Context, proposer sdk.ConsAddre
 	k.Logger(ctx).Info(
 		"@@Mint And Allocate Inflation",
 		"height", ctx.BlockHeight(),
-		"consAddr", currentValidator.GetOperator().String(),
+		"consAddr", proposer.String(),
+		"validatorAddr", currentValidator.GetOperator().String(),
 		"AccAddress", sdk.AccAddress(currentValidator.GetOperator()).String(),
 	)
 
