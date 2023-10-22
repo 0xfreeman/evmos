@@ -6,36 +6,6 @@ import (
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 
-//func (k Keeper) PrintLog(ctx sdk.Context, req abci.RequestBeginBlock) error {
-//	if err := k.MintAndAllocateInflation(ctx, req); err != nil {
-//		return err
-//	}
-//	//k.AllocateTokens(ctx, req)
-//	return nil
-//}
-
-func (k Keeper) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) {
-	consAddr := sdk.ConsAddress(req.Header.ProposerAddress)
-	k.SetCurrentProposerConsAddr(ctx, consAddr)
-	k.Logger(ctx).Info(
-		"Set Current Proposer Cons Addr.",
-		"height", ctx.BlockHeight(),
-		"consAddr", consAddr.String(),
-	)
-
-}
-
-func (k Keeper) EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
-	proposerConsAddr := k.GetCurrentProposerConsAddr(ctx)
-	k.Logger(ctx).Info(
-		"Get Current Proposer Cons Addr.",
-		"height", ctx.BlockHeight(),
-		"proposerConsAddr", proposerConsAddr.String(),
-	)
-	k.MintAndAllocateInflation(ctx, proposerConsAddr)
-	return []abci.ValidatorUpdate{}
-}
-
 func (k Keeper) MintCoins(ctx sdk.Context, coin sdk.Coin) error {
 	coins := sdk.NewCoins(coin)
 
@@ -45,6 +15,29 @@ func (k Keeper) MintCoins(ctx sdk.Context, coin sdk.Coin) error {
 	}
 
 	return k.bankKeeper.MintCoins(ctx, types.ModuleName, coins)
+}
+
+func (k Keeper) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) {
+	consAddr := sdk.ConsAddress(req.Header.ProposerAddress)
+	k.SetCurrentProposerConsAddr(ctx, consAddr)
+	k.Logger(ctx).Info(
+		"@@Set Current Proposer Cons Addr.",
+		"height", ctx.BlockHeight(),
+		"consAddr", consAddr.String(),
+	)
+
+}
+
+func (k Keeper) EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
+	proposerConsAddr := k.GetCurrentProposerConsAddr(ctx)
+	k.Logger(ctx).Info(
+		"@@Get Current Proposer Cons Addr.",
+		"height", ctx.BlockHeight(),
+		"proposerConsAddr", proposerConsAddr.String(),
+	)
+	k.MintAndAllocateInflation(ctx, proposerConsAddr)
+	k.AllocateTokens(ctx, proposerConsAddr)
+	return []abci.ValidatorUpdate{}
 }
 
 // MintAndAllocateInflation performs inflation minting and allocation
@@ -88,10 +81,10 @@ func (k Keeper) AllocateInflation(
 		return err
 	}
 	k.Logger(ctx).Info(
-		"AllocateExponentialInflation",
+		"AllocateInflation",
 		"height", ctx.BlockHeight(),
-		"mintedRewards", mintedRewards.String(),
 		"validatorAddr", validatorAddr.String(),
+		"mintedRewards", mintedRewards.String(),
 	)
 	return nil
 }
