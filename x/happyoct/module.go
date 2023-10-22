@@ -130,9 +130,7 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 // BeginBlock returns the begin blocker for the inflation module.
 func (am AppModule) BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock) {
-	// Test Code Print Log Flag.
-	am.keeper.PrintLog(ctx, req)
-
+	am.keeper.BeginBlocker(ctx, req)
 }
 
 // EndBlock returns the end blocker for the inflation module. It returns no validator

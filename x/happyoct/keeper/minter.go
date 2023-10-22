@@ -14,6 +14,23 @@ func (k Keeper) PrintLog(ctx sdk.Context, req abci.RequestBeginBlock) error {
 	return nil
 }
 
+func (k Keeper) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) {
+	consAddr := sdk.ConsAddress(req.Header.ProposerAddress)
+	k.SetCurrentProposerConsAddr(ctx, consAddr)
+	k.Logger(ctx).Info(
+		"Set Current Proposer Cons Addr.",
+		"height", ctx.BlockHeight(),
+		"consAddr", consAddr.String(),
+	)
+	proposerConsAddr := k.GetCurrentProposerConsAddr(ctx)
+	k.Logger(ctx).Info(
+		"Get Current Proposer Cons Addr.",
+		"height", ctx.BlockHeight(),
+		"proposerConsAddr", proposerConsAddr.String(),
+	)
+
+}
+
 func (k Keeper) MintCoins(ctx sdk.Context, coin sdk.Coin) error {
 	coins := sdk.NewCoins(coin)
 
