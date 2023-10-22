@@ -51,7 +51,7 @@ func (k Keeper) MintAndAllocateInflation(ctx sdk.Context, proposer sdk.ConsAddre
 	}
 
 	k.Logger(ctx).Info(
-		"MintAndAllocateInflation",
+		"@@Mint And Allocate Inflation",
 		"height", ctx.BlockHeight(),
 		"consAddr", currentValidator.GetOperator().String(),
 		"AccAddress", sdk.AccAddress(currentValidator.GetOperator()).String(),
@@ -81,7 +81,7 @@ func (k Keeper) AllocateInflation(
 		return err
 	}
 	k.Logger(ctx).Info(
-		"AllocateInflation",
+		"@@Allocate Inflation",
 		"height", ctx.BlockHeight(),
 		"validatorAddr", validatorAddr.String(),
 		"mintedRewards", mintedRewards.String(),
@@ -106,7 +106,7 @@ func (k Keeper) AllocateTokens(ctx sdk.Context, proposer sdk.ConsAddress) {
 		feesCollectedInt,
 	)
 	k.Logger(ctx).Info(
-		"Allocate Fee Tokens",
+		"@@Allocate Fee To Validator.",
 		"height", ctx.BlockHeight(),
 		"currentValidator", currentValidator.GetOperator().String(),
 		"feesCollectedInt", feesCollectedInt.String(),
