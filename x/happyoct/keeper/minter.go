@@ -71,6 +71,12 @@ func (k Keeper) AllocateInflation(
 	validatorAddr sdk.ValAddress,
 ) (err error) {
 	// Allocate staking rewards into fee collector account
+	oldBalance := k.bankKeeper.GetBalance(ctx, sdk.AccAddress(validatorAddr), mintedCoin.Denom)
+	k.Logger(ctx).Info(
+		"@@Validator Balance",
+		"height", ctx.BlockHeight(),
+		"old balance", oldBalance.String(),
+	)
 	mintedRewards := sdk.NewCoins(mintedCoin)
 	err = k.bankKeeper.SendCoinsFromModuleToAccount(
 		ctx,
@@ -81,11 +87,13 @@ func (k Keeper) AllocateInflation(
 	if err != nil {
 		return err
 	}
+	newBalance := k.bankKeeper.GetBalance(ctx, sdk.AccAddress(validatorAddr), mintedCoin.Denom)
 	k.Logger(ctx).Info(
 		"@@Allocate Inflation",
 		"height", ctx.BlockHeight(),
 		"validatorAddr", validatorAddr.String(),
 		"mintedRewards", mintedRewards.String(),
+		"new balance", newBalance.String(),
 	)
 	return nil
 }
