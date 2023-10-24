@@ -284,7 +284,7 @@ type Evmos struct {
 	FeeMarketKeeper feemarketkeeper.Keeper
 
 	// Evmos keepers
-	HappyOctKeeper   lisbonkeeper.Keeper
+	LisbonKeeper     lisbonkeeper.Keeper
 	InflationKeeper  inflationkeeper.Keeper
 	ClaimsKeeper     *claimskeeper.Keeper
 	Erc20Keeper      erc20keeper.Keeper
@@ -447,7 +447,7 @@ func NewEvmos(
 	)
 
 	// Evmos Keeper
-	app.HappyOctKeeper = lisbonkeeper.NewKeeper(keys[lisbontypes.StoreKey], appCodec, app.GetSubspace(lisbontypes.ModuleName),
+	app.LisbonKeeper = lisbonkeeper.NewKeeper(keys[lisbontypes.StoreKey], appCodec, app.GetSubspace(lisbontypes.ModuleName),
 		app.BankKeeper, &stakingKeeper, app.AccountKeeper, app.EvmKeeper, authtypes.FeeCollectorName)
 
 	app.InflationKeeper = inflationkeeper.NewKeeper(
@@ -512,7 +512,7 @@ func NewEvmos(
 			app.Erc20Keeper.Hooks(),
 			app.IncentivesKeeper.Hooks(),
 			app.RevenueKeeper.Hooks(),
-			app.HappyOctKeeper.Hooks(),
+			app.LisbonKeeper.Hooks(),
 			app.ClaimsKeeper.Hooks(),
 		),
 	)
@@ -613,7 +613,7 @@ func NewEvmos(
 		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
 		feemarket.NewAppModule(app.FeeMarketKeeper),
 		// Evmos app modules
-		lisbon.NewAppModule(app.HappyOctKeeper, app.AccountKeeper),
+		lisbon.NewAppModule(app.LisbonKeeper, app.AccountKeeper),
 		inflation.NewAppModule(app.InflationKeeper, app.AccountKeeper, app.StakingKeeper),
 		erc20.NewAppModule(app.Erc20Keeper, app.AccountKeeper),
 		incentives.NewAppModule(app.IncentivesKeeper, app.AccountKeeper),

@@ -1,0 +1,27 @@
+syntax = "proto3";
+package evmos.lisbon.v1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/evmos/evmos/v10/x/lisbon/types";
+
+// GenesisState defines the recovery module's genesis state.
+message GenesisState {
+  // params defines all the paramaters of the module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+// Params holds parameters for the recovery module
+message Params {
+  // denom
+  string denom = 1;
+  // mint_amount
+  string mint_amount = 2
+      [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+  // burn_shares
+  string burn_shares = 3
+      [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+  // rewards_shares
+  string rewards_shares = 4
+      [(gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec", (gogoproto.nullable) = false];
+}

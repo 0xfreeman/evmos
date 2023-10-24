@@ -12,24 +12,6 @@ const (
 	RouterKey = ModuleName
 )
 
-// prefix bytes for the inflation persistent store
-//const (
-//	prefixPeriod = iota + 1
-//	prefixEpochMintProvision
-//	prefixEpochIdentifier
-//	prefixEpochsPerPeriod
-//	prefixSkippedEpochs
-//)
-
-// KVStore key prefixes
-//var (
-//	KeyPrefixPeriod             = []byte{prefixPeriod}
-//	KeyPrefixEpochMintProvision = []byte{prefixEpochMintProvision}
-//	KeyPrefixEpochIdentifier    = []byte{prefixEpochIdentifier}
-//	KeyPrefixEpochsPerPeriod    = []byte{prefixEpochsPerPeriod}
-//	KeyPrefixSkippedEpochs      = []byte{prefixSkippedEpochs}
-//)
-
 var (
 	//FeePoolKey                        = []byte{0x00} // key for global distribution state
 	ProposerKey = []byte{0x01} // key for the proposer operator address
