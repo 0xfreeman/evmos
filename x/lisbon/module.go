@@ -1,4 +1,4 @@
-package happyoct
+package lisbon
 
 import (
 	"encoding/json"
@@ -11,8 +11,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
-	"github.com/evmos/evmos/v10/x/happyoct/keeper"
-	"github.com/evmos/evmos/v10/x/happyoct/types"
+	"github.com/evmos/evmos/v10/x/lisbon/keeper"
+	"github.com/evmos/evmos/v10/x/lisbon/types"
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"

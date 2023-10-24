@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/evmos/evmos/v10/x/happyoct/types"
+	"github.com/evmos/evmos/v10/x/lisbon/types"
 	abci "github.com/tendermint/tendermint/abci/types"
 )
 

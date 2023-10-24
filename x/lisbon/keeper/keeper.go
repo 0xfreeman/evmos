@@ -5,7 +5,7 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/evmos/evmos/v10/x/happyoct/types"
+	"github.com/evmos/evmos/v10/x/lisbon/types"
 	"github.com/tendermint/tendermint/libs/log"
 )
 

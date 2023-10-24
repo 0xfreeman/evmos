@@ -3,7 +3,7 @@ package types
 // constants
 const (
 	// module name
-	ModuleName = "happyoct"
+	ModuleName = "lisbon"
 
 	// StoreKey to be used when creating the KVStore
 	StoreKey = ModuleName

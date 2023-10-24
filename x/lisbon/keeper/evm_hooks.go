@@ -6,7 +6,7 @@ import (
 	"github.com/ethereum/go-ethereum/core"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
-	"github.com/evmos/evmos/v10/x/happyoct/types"
+	"github.com/evmos/evmos/v10/x/lisbon/types"
 )
 
 var _ evmtypes.EvmHooks = Hooks{}

@@ -2,7 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/evmos/evmos/v10/x/happyoct/types"
+	"github.com/evmos/evmos/v10/x/lisbon/types"
 	gogotypes "github.com/gogo/protobuf/types"
 )
 
