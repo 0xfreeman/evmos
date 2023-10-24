@@ -80,9 +80,6 @@ func validateMintAmount(i interface{}) error {
 	if v.IsNegative() {
 		return fmt.Errorf("initial value cannot be negative")
 	}
-	if v.GT(sdk.NewDec(1)) {
-		return fmt.Errorf("reduction factor cannot be greater than 1")
-	}
 	return nil
 
 }
