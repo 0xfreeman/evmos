@@ -145,9 +145,6 @@ func (h Hooks) AfterValidatorCreated(ctx sdk.Context, valAddr sdk.ValAddress) er
 }
 
 func (h Hooks) BeforeValidatorModified(ctx sdk.Context, valAddr sdk.ValAddress) error {
-	//validator := h.k.sk.Validator(ctx, valAddr)
-	validator := h.k.stakingKeeper.Validator(ctx, valAddr)
-	h.k.Logger(ctx).Info("#################BeforeValidatorModified", "validator", validator, "token", validator.GetTokens())
 	return nil
 }
 

@@ -3,7 +3,6 @@ package types
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 )
 
 // BankKeeper defines the banking contract that must be fulfilled when
@@ -36,6 +35,4 @@ type DistrKeeper interface {
 type StakingKeeper interface {
 	// BondDenom - Bondable coin denomination
 	BondDenom(sdk.Context) string
-	Validator(sdk.Context, sdk.ValAddress) stakingtypes.ValidatorI            // get a particular validator by operator address
-	ValidatorByConsAddr(sdk.Context, sdk.ConsAddress) stakingtypes.ValidatorI // get a particular validator by consensus address
 }
