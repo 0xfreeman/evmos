@@ -1,6 +1,7 @@
 package types
 
 import (
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -44,6 +45,7 @@ type StakingKeeper interface {
 		fn func(index int64, delegation stakingtypes.DelegationI) (stop bool))
 
 	GetAllSDKDelegations(ctx sdk.Context) []stakingtypes.Delegation
+	MinTokenAmount(ctx sdk.Context) (res math.Uint)
 }
 
 type EVMKeeper interface {

@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/evmos/evmos/v10/x/lisbon/types"
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -41,14 +42,19 @@ func (k Keeper) EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Valid
 }
 
 // MintAndAllocateInflation performs inflation minting and allocation
-func (k Keeper) MintAndAllocateInflation(ctx sdk.Context, proposer sdk.ConsAddress) (err error) {
+func (k Keeper) MintAndAllocateInflation(ctx sdk.Context, proposer sdk.ConsAddress) {
 	// Mint coins for distribution
 	currentValidator := k.stakingKeeper.ValidatorByConsAddr(ctx, proposer)
+	minTokenAmount := k.stakingKeeper.MinTokenAmount(ctx)
+	if math.NewUintFromBigInt(currentValidator.GetTokens().BigInt()).LT(minTokenAmount) {
+		return
+	}
+
 	params := k.GetParams(ctx)
 	//evmDenom := k.evmKeeper.GetEVMDenom(ctx)
 	coin := sdk.NewCoin(params.Denom, params.MintAmount)
 	if err := k.MintCoins(ctx, coin); err != nil {
-		return err
+		return
 	}
 
 	k.Logger(ctx).Info(
@@ -61,7 +67,7 @@ func (k Keeper) MintAndAllocateInflation(ctx sdk.Context, proposer sdk.ConsAddre
 
 	// Allocate minted coins according to allocation proportions (staking, usage
 	// incentives, community pool)
-	return k.AllocateInflation(ctx, coin, currentValidator.GetOperator())
+	k.AllocateInflation(ctx, coin, currentValidator.GetOperator())
 }
 
 // AllocateInflation allocates coins from the inflation to external
@@ -70,7 +76,7 @@ func (k Keeper) AllocateInflation(
 	ctx sdk.Context,
 	mintedCoin sdk.Coin,
 	validatorAddr sdk.ValAddress,
-) (err error) {
+) {
 	// Allocate staking rewards into fee collector account
 	oldBalance := k.bankKeeper.GetBalance(ctx, sdk.AccAddress(validatorAddr), mintedCoin.Denom)
 	k.Logger(ctx).Info(
@@ -79,15 +85,16 @@ func (k Keeper) AllocateInflation(
 		"old balance", oldBalance.String(),
 	)
 	mintedRewards := sdk.NewCoins(mintedCoin)
-	err = k.bankKeeper.SendCoinsFromModuleToAccount(
+	err := k.bankKeeper.SendCoinsFromModuleToAccount(
 		ctx,
 		types.ModuleName,
 		sdk.AccAddress(validatorAddr),
 		mintedRewards,
 	)
 	if err != nil {
-		return err
+		return
 	}
+
 	newBalance := k.bankKeeper.GetBalance(ctx, sdk.AccAddress(validatorAddr), mintedCoin.Denom)
 	k.Logger(ctx).Info(
 		"@@Allocate Inflation",
@@ -96,17 +103,21 @@ func (k Keeper) AllocateInflation(
 		"mintedRewards", mintedRewards.String(),
 		"new balance", newBalance.String(),
 	)
-	return nil
+
 }
 
 func (k Keeper) AllocateTokens(ctx sdk.Context, proposer sdk.ConsAddress) {
 	currentValidator := k.stakingKeeper.ValidatorByConsAddr(ctx, proposer)
+	minTokenAmount := k.stakingKeeper.MinTokenAmount(ctx)
+	if math.NewUintFromBigInt(currentValidator.GetTokens().BigInt()).LT(minTokenAmount) {
+		return
+	}
 	feeCollector := k.accountKeeper.GetModuleAccount(ctx, k.feeCollectorName)
 	feesCollectedInt := k.bankKeeper.GetAllBalances(ctx, feeCollector.GetAddress())
 	// transfer collected fees to the distribution module account
 	err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, k.feeCollectorName, types.ModuleName, feesCollectedInt)
 	if err != nil {
-		panic(err)
+		return
 	}
 	//k.bankKeeper.BurnCoins(ctx, types.ModuleName, coins)
 	err = k.bankKeeper.SendCoinsFromModuleToAccount(
