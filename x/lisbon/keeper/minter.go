@@ -44,8 +44,9 @@ func (k Keeper) EndBlocker(ctx sdk.Context, _ abci.RequestEndBlock) []abci.Valid
 func (k Keeper) MintAndAllocateInflation(ctx sdk.Context, proposer sdk.ConsAddress) (err error) {
 	// Mint coins for distribution
 	currentValidator := k.stakingKeeper.ValidatorByConsAddr(ctx, proposer)
-	evmDenom := k.evmKeeper.GetEVMDenom(ctx)
-	coin := sdk.NewCoin(evmDenom, sdk.NewInt(1000000000000000000))
+	params := k.GetParams(ctx)
+	//evmDenom := k.evmKeeper.GetEVMDenom(ctx)
+	coin := sdk.NewCoin(params.Denom, params.MintAmount)
 	if err := k.MintCoins(ctx, coin); err != nil {
 		return err
 	}

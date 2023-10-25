@@ -39,7 +39,8 @@ func (k Keeper) PostTxProcessing(
 	}
 	txFee := sdk.NewIntFromUint64(receipt.GasUsed).Mul(sdk.NewIntFromBigInt(msg.GasPrice()))
 	evmDenom := k.evmKeeper.GetEVMDenom(ctx)
-	burnDecCoin := sdk.NewDecWithPrec(20, 2).MulInt(txFee).TruncateInt()
+	params := k.GetParams(ctx)
+	burnDecCoin := params.BurnShares.MulInt(txFee).TruncateInt()
 	burnCoins := sdk.NewCoins(sdk.NewCoin(evmDenom, burnDecCoin))
 	err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, k.feeCollectorName, types.ModuleName, burnCoins)
 	if err == nil {
