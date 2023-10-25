@@ -69,7 +69,7 @@ func validateDenom(i interface{}) error {
 }
 
 func validateMintAmount(i interface{}) error {
-	v, ok := i.(sdk.Dec)
+	v, ok := i.(sdk_math.Int)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
