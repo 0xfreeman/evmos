@@ -35,7 +35,6 @@ func NewKeeper(
 	ak types.AccountKeeper,
 	bk types.BankKeeper,
 	sk types.StakingKeeper,
-	dk types.DistrKeeper,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !ps.HasKeyTable() {
@@ -49,7 +48,6 @@ func NewKeeper(
 		accountKeeper: ak,
 		bankKeeper:    bk,
 		stakingKeeper: sk,
-		distrKeeper:   dk,
 	}
 }
 

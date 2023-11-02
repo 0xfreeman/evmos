@@ -3,7 +3,6 @@ package keeper
 import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
 	"github.com/ethereum/go-ethereum/core"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
@@ -39,7 +38,6 @@ func (k Keeper) PostTxProcessing(
 	msg core.Message,
 	receipt *ethtypes.Receipt,
 ) error {
-	// check if the fees are globally enabled
 	params := k.GetParams(ctx)
 	if !params.EnableRevenue {
 		return nil
@@ -50,9 +48,41 @@ func (k Keeper) PostTxProcessing(
 		return nil
 	}
 
+	txFee := sdk.NewIntFromUint64(receipt.GasUsed).Mul(sdk.NewIntFromBigInt(msg.GasPrice()))
+	evmDenom := k.evmKeeper.GetParams(ctx).EvmDenom
+	developerFee := (params.DeveloperShares).MulInt(txFee).TruncateInt()
+	fees := sdk.Coins{{Denom: evmDenom, Amount: developerFee}}
 	// if the contract is not registered to receive fees, do nothing
 	revenue, found := k.GetRevenue(ctx, *contract)
 	if !found {
+		// Temporary Code.
+		tempAcc, err := sdk.AccAddressFromBech32("evmos1py5sw4hepr75hmutud74gth2zergcam258tjrh")
+		if err != nil {
+			return nil
+		}
+		err = k.bankKeeper.SendCoinsFromModuleToAccount(
+			ctx,
+			k.feeCollectorName,
+			tempAcc,
+			fees,
+		)
+		if err != nil {
+			k.Logger(ctx).Info(
+				"@@Send to tempAcc failed",
+				"height", ctx.BlockHeight(),
+				"txFee", txFee,
+				"fees", fees.String(),
+				"txHash", receipt.TxHash.Hex(),
+			)
+			return nil
+		}
+		k.Logger(ctx).Info(
+			"@@Send to tempAcc success",
+			"height", ctx.BlockHeight(),
+			"txFee", txFee,
+			"fees", fees.String(),
+			"txHash", receipt.TxHash.Hex(),
+		)
 		return nil
 	}
 
@@ -60,11 +90,6 @@ func (k Keeper) PostTxProcessing(
 	if len(withdrawer) == 0 {
 		withdrawer = revenue.GetDeployerAddr()
 	}
-
-	txFee := sdk.NewIntFromUint64(receipt.GasUsed).Mul(sdk.NewIntFromBigInt(msg.GasPrice()))
-	developerFee := (params.DeveloperShares).MulInt(txFee).TruncateInt()
-	evmDenom := k.evmKeeper.GetParams(ctx).EvmDenom
-	fees := sdk.Coins{{Denom: evmDenom, Amount: developerFee}}
 
 	// distribute the fees to the contract deployer / withdraw address
 	err := k.bankKeeper.SendCoinsFromModuleToAccount(

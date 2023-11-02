@@ -17,7 +17,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx/signing"
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	govv1beta1 "github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
@@ -40,7 +39,7 @@ import (
 
 var _ = Describe("Claiming", Ordered, func() {
 	claimsAddr := s.app.AccountKeeper.GetModuleAddress(types.ModuleName)
-	distrAddr := s.app.AccountKeeper.GetModuleAddress(distrtypes.ModuleName)
+
 	stakeDenom := stakingtypes.DefaultParams().BondDenom
 	claimsDenom := types.DefaultClaimsDenom
 	accountCount := 4
@@ -114,10 +113,6 @@ var _ = Describe("Claiming", Ordered, func() {
 			Expect(balance.Amount).To(Equal(initClaimsAmount))
 		}
 
-		// ensure community pool doesn't have the fund
-		poolBalance := s.app.BankKeeper.GetBalance(s.ctx, distrAddr, claimsDenom)
-		Expect(poolBalance.IsZero()).To(BeTrue())
-
 		// ensure module account has the escrow fund
 		balanceClaims := s.app.BankKeeper.GetBalance(s.ctx, claimsAddr, claimsDenom)
 		Expect(balanceClaims).To(Equal(totalClaimsAmount))
@@ -158,9 +153,6 @@ var _ = Describe("Claiming", Ordered, func() {
 		})
 
 		It("did not clawback to the community pool", func() {
-			// ensure community pool doesn't have the fund
-			poolBalance := s.app.BankKeeper.GetBalance(s.ctx, distrAddr, claimsDenom)
-			Expect(poolBalance.IsZero()).To(BeTrue())
 
 			// ensure module account has the escrow fund minus what was claimed
 			balanceClaims := s.app.BankKeeper.GetBalance(s.ctx, claimsAddr, claimsDenom)
@@ -241,10 +233,6 @@ var _ = Describe("Claiming", Ordered, func() {
 			remainderUnclaimed = sdk.NewCoin(claimsDenom, unclaimedV.Amount.MulRaw(4))
 			totalClaimed = totalClaimed.Add(sdk.NewCoin(claimsDenom, actionV.Amount.MulRaw(4)))
 
-			// ensure community pool doesn't have the fund
-			poolBalance := s.app.BankKeeper.GetBalance(s.ctx, distrAddr, claimsDenom)
-			Expect(poolBalance).To(Equal(remainderUnclaimed))
-
 			// ensure module account has the escrow fund minus what was claimed
 			balanceClaims := s.app.BankKeeper.GetBalance(s.ctx, claimsAddr, claimsDenom)
 			Expect(balanceClaims).To(Equal(totalClaimsAmount.Sub(totalClaimed).Sub(remainderUnclaimed)))
@@ -259,10 +247,6 @@ var _ = Describe("Claiming", Ordered, func() {
 			// ensure module account has the unclaimed amount before airdrop ends
 			moduleBalances := s.app.ClaimsKeeper.GetModuleAccountBalances(s.ctx)
 			Expect(moduleBalances.AmountOf(claimsDenom)).To(Equal(totalClaimsAmount.Sub(totalClaimed).Sub(remainderUnclaimed).Amount))
-
-			// ensure community pool has 0 funds before airdrop ends
-			poolBalance := s.app.BankKeeper.GetBalance(s.ctx, distrAddr, claimsDenom)
-			Expect(poolBalance).To(Equal(remainderUnclaimed))
 
 			s.Commit()
 		})
@@ -301,10 +285,6 @@ var _ = Describe("Claiming", Ordered, func() {
 			moduleBalance := s.app.ClaimsKeeper.GetModuleAccountBalances(s.ctx)
 			Expect(moduleBalance.AmountOf(claimsDenom).IsZero()).To(BeTrue())
 
-			// The unclaimed amount goes to the community pool
-			// including any dust amounts coins were given for performing the claim
-			poolBalance := s.app.BankKeeper.GetBalance(s.ctx, distrAddr, claimsDenom)
-			Expect(poolBalance).To(Equal(totalClaimsAmount.Sub(totalClaimed).Add(sdk.NewCoin(claimsDenom, initClaimsAmount))))
 		})
 	})
 })

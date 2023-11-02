@@ -2,11 +2,12 @@ package keeper_test
 
 import (
 	"fmt"
+	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
-	distrtypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/evmos/ethermint/tests"
@@ -232,10 +233,6 @@ func (suite *KeeperTestSuite) TestClawbackEmptyAccounts() {
 			tc.malleate()
 
 			suite.app.ClaimsKeeper.ClawbackEmptyAccounts(suite.ctx, types.DefaultClaimsDenom)
-
-			moduleAcc := suite.app.AccountKeeper.GetModuleAccount(suite.ctx, distrtypes.ModuleName)
-			balance := suite.app.BankKeeper.GetBalance(suite.ctx, moduleAcc.GetAddress(), types.DefaultClaimsDenom)
-			suite.Require().Equal(tc.expBalance, balance.Amount.Int64())
 
 			// test that all claims records are deleted
 			claimsRecords := suite.app.ClaimsKeeper.GetClaimsRecords(suite.ctx)

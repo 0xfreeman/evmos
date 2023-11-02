@@ -5,21 +5,18 @@ import (
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-
+	"github.com/evmos/evmos/v10/x/lisbon/types"
 	"github.com/tendermint/tendermint/libs/log"
-
-	"github.com/evmos/evmos/v10/x/inflation/types"
 )
 
-// Keeper of the inflation store
 type Keeper struct {
-	storeKey   storetypes.StoreKey
-	cdc        codec.BinaryCodec
-	paramstore paramtypes.Subspace
-
-	accountKeeper    types.AccountKeeper
+	storeKey         storetypes.StoreKey
+	cdc              codec.BinaryCodec
+	paramstore       paramtypes.Subspace
 	bankKeeper       types.BankKeeper
 	stakingKeeper    types.StakingKeeper
+	accountKeeper    types.AccountKeeper
+	evmKeeper        types.EVMKeeper
 	feeCollectorName string
 }
 
@@ -28,9 +25,10 @@ func NewKeeper(
 	storeKey storetypes.StoreKey,
 	cdc codec.BinaryCodec,
 	ps paramtypes.Subspace,
-	ak types.AccountKeeper,
 	bk types.BankKeeper,
 	sk types.StakingKeeper,
+	ak types.AccountKeeper,
+	evmk types.EVMKeeper,
 	feeCollectorName string,
 ) Keeper {
 	// ensure mint module account is set
@@ -47,9 +45,10 @@ func NewKeeper(
 		storeKey:         storeKey,
 		cdc:              cdc,
 		paramstore:       ps,
-		accountKeeper:    ak,
 		bankKeeper:       bk,
 		stakingKeeper:    sk,
+		accountKeeper:    ak,
+		evmKeeper:        evmk,
 		feeCollectorName: feeCollectorName,
 	}
 }

@@ -18,12 +18,12 @@ func (k Keeper) MintAndAllocateInflation(
 	ctx sdk.Context,
 	coin sdk.Coin,
 ) (
-	staking, incentives, communityPool sdk.Coins,
+	staking, incentives sdk.Coins,
 	err error,
 ) {
 	// Mint coins for distribution
 	if err := k.MintCoins(ctx, coin); err != nil {
-		return nil, nil, nil, err
+		return nil, nil, err
 	}
 
 	// Allocate minted coins according to allocation proportions (staking, usage
@@ -53,7 +53,7 @@ func (k Keeper) AllocateExponentialInflation(
 	ctx sdk.Context,
 	mintedCoin sdk.Coin,
 ) (
-	staking, incentives, communityPool sdk.Coins,
+	staking, incentives sdk.Coins,
 	err error,
 ) {
 	params := k.GetParams(ctx)
@@ -68,7 +68,7 @@ func (k Keeper) AllocateExponentialInflation(
 		staking,
 	)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, err
 	}
 
 	// Allocate usage incentives to incentives module account
@@ -80,23 +80,10 @@ func (k Keeper) AllocateExponentialInflation(
 		incentives,
 	)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, err
 	}
 
-	// Allocate community pool amount (remaining module balance) to community
-	// pool address
-	moduleAddr := k.accountKeeper.GetModuleAddress(types.ModuleName)
-	communityPool = k.bankKeeper.GetAllBalances(ctx, moduleAddr)
-	err = k.distrKeeper.FundCommunityPool(
-		ctx,
-		communityPool,
-		moduleAddr,
-	)
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	return staking, incentives, communityPool, nil
+	return staking, incentives, nil
 }
 
 // GetAllocationProportion calculates the proportion of coins that is to be

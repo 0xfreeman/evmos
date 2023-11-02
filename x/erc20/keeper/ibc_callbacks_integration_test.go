@@ -851,9 +851,6 @@ var _ = Describe("Convert outgoing ERC20 to IBC", Ordered, func() {
 			s.Require().Equal(amount, balanceERC20TokenAfter.Int64())
 		})
 		It("should error and reconvert coins", func() {
-			receiverAcc = s.IBCCosmosChain.GetSimApp().AccountKeeper.GetModuleAddress("distribution")
-			receiver = receiverAcc.String()
-			s.IBCOsmosisChain.GetSimApp().BankKeeper.BlockedAddr(receiverAcc)
 
 			balance := s.app.BankKeeper.GetBalance(s.EvmosChain.GetContext(), senderAcc, teststypes.UosmoIbcdenom)
 			s.Require().Equal(amount, balance.Amount.Int64())
