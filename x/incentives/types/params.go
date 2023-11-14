@@ -28,7 +28,7 @@ import (
 var ParamsKey = []byte("Params")
 
 var (
-	DefaultEnableIncentives          = true
+	DefaultEnableIncentives          = false
 	DefaultAllocationLimit           = sdk.NewDecWithPrec(5, 2)
 	DefaultIncentivesEpochIdentifier = epochstypes.WeekEpochID
 	DefaultRewardScalar              = sdk.NewDecWithPrec(12, 1)

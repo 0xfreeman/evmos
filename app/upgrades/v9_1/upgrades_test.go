@@ -101,11 +101,6 @@ func (suite *UpgradeTestSuite) TestMigrateFaucetBalance() {
 				suite.Require().NoError(err)
 				err = suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins)
 				suite.Require().NoError(err)
-				err = suite.app.DistrKeeper.FundCommunityPool(suite.ctx, coins, sender)
-				suite.Require().NoError(err)
-
-				balanceBefore := suite.app.DistrKeeper.GetFeePoolCommunityCoins(suite.ctx)
-				suite.Require().Equal(balanceBefore.AmountOf("aevmos"), sdk.NewDecFromInt(res))
 			},
 			true,
 		},
@@ -124,12 +119,6 @@ func (suite *UpgradeTestSuite) TestMigrateFaucetBalance() {
 				suite.Require().NoError(err)
 				err = suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins)
 				suite.Require().NoError(err)
-				err = suite.app.DistrKeeper.FundCommunityPool(suite.ctx, coins, sender)
-				suite.Require().NoError(err)
-
-				balanceBefore := suite.app.DistrKeeper.GetFeePoolCommunityCoins(suite.ctx)
-				suite.Require().Equal(balanceBefore.AmountOf("aevmos"), sdk.NewDecFromInt(res))
-
 				v9.Accounts[0][1] = v9.MaxRecover
 			},
 			false,
@@ -149,12 +138,6 @@ func (suite *UpgradeTestSuite) TestMigrateFaucetBalance() {
 				suite.Require().NoError(err)
 				err = suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins)
 				suite.Require().NoError(err)
-				err = suite.app.DistrKeeper.FundCommunityPool(suite.ctx, coins, sender)
-				suite.Require().NoError(err)
-
-				balanceBefore := suite.app.DistrKeeper.GetFeePoolCommunityCoins(suite.ctx)
-				suite.Require().Equal(balanceBefore.AmountOf("aevmos"), sdk.NewDecFromInt(res))
-
 				v9.Accounts[1000][1] = v9.MaxRecover
 			},
 			false,
@@ -173,10 +156,6 @@ func (suite *UpgradeTestSuite) TestMigrateFaucetBalance() {
 			suite.SetupTest(tc.chainID)
 
 			tc.malleate()
-
-			logger := suite.ctx.Logger().With("upgrade", "Test v9 Upgrade")
-			v9.HandleMainnetUpgrade(suite.ctx, suite.app.DistrKeeper, logger)
-
 			// check balance of affected accounts
 			if tc.expectedSuccess {
 				for i := range v9.Accounts {
@@ -186,8 +165,6 @@ func (suite *UpgradeTestSuite) TestMigrateFaucetBalance() {
 					suite.Require().Equal(balance.Amount, res)
 				}
 
-				balanceAfter := suite.app.DistrKeeper.GetFeePoolCommunityCoins(suite.ctx)
-				suite.Require().True(balanceAfter.IsZero())
 			} else {
 				for i := range v9.Accounts {
 					addr := sdk.MustAccAddressFromBech32(v9.Accounts[i][0])

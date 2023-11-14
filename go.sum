@@ -201,6 +201,8 @@ filippo.io/edwards25519 v1.0.0-rc.1 h1:m0VOOB23frXZvAOK44usCgLWvtsxIoMCTBGJZlpmG
 filippo.io/edwards25519 v1.0.0-rc.1/go.mod h1:N1IkdkCkiLB6tki+MYJoSx2JTY9NUlxZE7eHn5EwJns=
 git.sr.ht/~sircmpwn/getopt v0.0.0-20191230200459-23622cc906b3/go.mod h1:wMEGFFFNuPos7vHmWXfszqImLppbc0wEhh6JBfJIUgw=
 git.sr.ht/~sircmpwn/go-bare v0.0.0-20210406120253-ab86bc2846d9/go.mod h1:BVJwbDfVjCjoFiKrhkei6NdGcZYpkDkdyCdg1ukytRA=
+github.com/0xfreeman/cosmos-sdk v0.46.13-ledger.3 h1:PyIrEzwONjb3o76COb1eCjEPjJ11f6oR7qcZK9xt4ac=
+github.com/0xfreeman/cosmos-sdk v0.46.13-ledger.3/go.mod h1:EfY521ATNEla8eJ6oJuZBdgP5+p360s7InnRqX+TWdM=
 github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 h1:/vQbFIOMbk2FiG/kXiLl8BRyzTWDw7gX/Hz7Dd5eDMs=
 github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4/go.mod h1:hN7oaIRCjzsZ2dE+yG5k+rsdt3qcwykqK6HVGcKwsw4=
 github.com/Azure/azure-sdk-for-go/sdk/azcore v0.21.1/go.mod h1:fBF9PQNqB8scdgpZ3ufzaLntG0AG7C1WjPMsiFOmfHM=
@@ -479,8 +481,6 @@ github.com/envoyproxy/go-control-plane v0.9.9-0.20210512163311-63b5d3c536b0/go.m
 github.com/envoyproxy/go-control-plane v0.9.10-0.20210907150352-cf90f659a021/go.mod h1:AFq3mo9L8Lqqiid3OhADV3RfLJnjiw63cSpi+fDTRC0=
 github.com/envoyproxy/go-control-plane v0.10.2-0.20220325020618-49ff273808a1/go.mod h1:KJwIaB5Mv44NWtYuAOFCVOjcI94vtpEz2JU/D2v6IjE=
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
-github.com/evmos/cosmos-sdk v0.46.13-ledger.3 h1:GYoD+tM3lpn6TTRra6YCcfrxCXO39ATHWwvZkl53Mv4=
-github.com/evmos/cosmos-sdk v0.46.13-ledger.3/go.mod h1:EfY521ATNEla8eJ6oJuZBdgP5+p360s7InnRqX+TWdM=
 github.com/evmos/evmos-ledger-go v0.3.0-rc0 h1:QbfTCOxAxvaHbdwmkEPewr0BwWy9hnQEc6kXZ6gij/I=
 github.com/evmos/evmos-ledger-go v0.3.0-rc0/go.mod h1:w2llvjRGkc7u/S1FQfznebxAwrc+wCOIqXcDFUWVkKQ=
 github.com/evmos/go-ethereum v1.10.26 h1:7wlczxUWTwhzJJUyh3Kkqt3/5fdSJzh8c42boc9GuII=
