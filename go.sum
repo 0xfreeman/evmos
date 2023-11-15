@@ -203,6 +203,7 @@ git.sr.ht/~sircmpwn/getopt v0.0.0-20191230200459-23622cc906b3/go.mod h1:wMEGFFFN
 git.sr.ht/~sircmpwn/go-bare v0.0.0-20210406120253-ab86bc2846d9/go.mod h1:BVJwbDfVjCjoFiKrhkei6NdGcZYpkDkdyCdg1ukytRA=
 github.com/0xfreeman/cosmos-sdk v0.46.13-ledger.3.0.20231115033116-75356878c905 h1:7APea2RGooJF4c7gORkCUK7XYW9bXtFqWIQEYaJhIFs=
 github.com/0xfreeman/cosmos-sdk v0.46.13-ledger.3.0.20231115033116-75356878c905/go.mod h1:EfY521ATNEla8eJ6oJuZBdgP5+p360s7InnRqX+TWdM=
+github.com/0xfreeman/cosmos-sdk v0.46.13-ledger.3.0.20231115082521-9c0e83c230b9/go.mod h1:EfY521ATNEla8eJ6oJuZBdgP5+p360s7InnRqX+TWdM=
 github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4 h1:/vQbFIOMbk2FiG/kXiLl8BRyzTWDw7gX/Hz7Dd5eDMs=
 github.com/99designs/go-keychain v0.0.0-20191008050251-8e49817e8af4/go.mod h1:hN7oaIRCjzsZ2dE+yG5k+rsdt3qcwykqK6HVGcKwsw4=
 github.com/Azure/azure-sdk-for-go/sdk/azcore v0.21.1/go.mod h1:fBF9PQNqB8scdgpZ3ufzaLntG0AG7C1WjPMsiFOmfHM=
