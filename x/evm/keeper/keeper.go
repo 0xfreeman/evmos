@@ -331,6 +331,11 @@ func (k *Keeper) GetBalance(ctx sdk.Context, addr common.Address) *big.Int {
 	return coin.Amount.BigInt()
 }
 
+func (k *Keeper) GetEVMDenom(ctx sdk.Context) string {
+	params := k.GetParams(ctx)
+	return params.GetEvmDenom()
+}
+
 // GetBaseFee returns current base fee, return values:
 // - `nil`: london hardfork not enabled.
 // - `0`: london hardfork enabled but feemarket is not enabled.

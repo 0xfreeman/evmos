@@ -389,7 +389,6 @@ func (suite *KeeperTestSuite) TestClaimCoinsForAction() {
 			tc.malleate()
 
 			initialBalance := suite.app.BankKeeper.GetBalance(suite.ctx, addr, types.DefaultClaimsDenom)
-			initialCommunityPoolCoins := suite.app.DistrKeeper.GetFeePoolCommunityCoins(suite.ctx)
 
 			amt, err := suite.app.ClaimsKeeper.ClaimCoinsForAction(suite.ctx, addr, tc.claimsRecord, tc.action, tc.params)
 			if tc.expError {
@@ -407,12 +406,6 @@ func (suite *KeeperTestSuite) TestClaimCoinsForAction() {
 			expBalance := initialBalance.Add(sdk.NewCoin(types.DefaultClaimsDenom, amt))
 			postClaimBalance := suite.app.BankKeeper.GetBalance(suite.ctx, addr, types.DefaultClaimsDenom)
 			suite.Require().Equal(expBalance, postClaimBalance)
-
-			if !tc.expClawedBack.IsZero() {
-				initialCommunityPoolCoins = initialCommunityPoolCoins.Add(sdk.NewDecCoin(tc.params.ClaimsDenom, tc.expClawedBack))
-				funds := suite.app.DistrKeeper.GetFeePoolCommunityCoins(suite.ctx)
-				suite.Require().Equal(initialCommunityPoolCoins.String(), funds.String())
-			}
 
 			if tc.expDeleteRecord {
 				suite.Require().False(suite.app.ClaimsKeeper.HasClaimsRecord(suite.ctx, addr))
@@ -447,7 +440,6 @@ func (suite *KeeperTestSuite) TestMergeClaimRecords() {
 				recipientClaimsRecord := types.NewClaimsRecord(sdk.NewInt(200))
 
 				expBalance := suite.app.BankKeeper.GetBalance(suite.ctx, recipient, params.ClaimsDenom)
-				initialCommunityPoolCoins := suite.app.DistrKeeper.GetFeePoolCommunityCoins(suite.ctx)
 
 				coins := sdk.Coins{sdk.NewCoin(params.ClaimsDenom, sdk.NewInt(100))}
 				err := testutil.FundModuleAccount(suite.ctx, suite.app.BankKeeper, types.ModuleName, coins)
@@ -470,10 +462,6 @@ func (suite *KeeperTestSuite) TestMergeClaimRecords() {
 				}
 
 				suite.Require().Equal(expectedRecord, mergedRecord)
-
-				initialCommunityPoolCoins = initialCommunityPoolCoins.Add(sdk.NewDecCoin(params.ClaimsDenom, sdk.NewInt(50)))
-				funds := suite.app.DistrKeeper.GetFeePoolCommunityCoins(suite.ctx)
-				suite.Require().Equal(initialCommunityPoolCoins.String(), funds.String())
 
 				expBalance = expBalance.Add(sdk.NewCoin(params.ClaimsDenom, sdk.NewInt(50)))
 				balance := suite.app.BankKeeper.GetBalance(suite.ctx, recipient, params.ClaimsDenom)
