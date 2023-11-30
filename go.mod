@@ -218,7 +218,7 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
 	// use Cosmos-SDK fork to enable Ledger functionality
 	github.com/cosmos/cosmos-sdk => github.com/evmos/cosmos-sdk v0.46.7-ledger
-	github.com/evmos/ethermint => github.com/0xfreeman/ethermint v0.20.1-0.20231120101441-0b7bd1293402
+	github.com/evmos/ethermint => github.com/0xfreeman/ethermint v0.20.1-0.20231130104717-80e4b9dea7ad
 	// use cosmos flavored protobufs
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 )
